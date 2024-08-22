@@ -1,5 +1,5 @@
 import H1 from "@/components/h1";
-import { EventoEvent } from "@/lib/types";
+import { ChildrenProps, EventoEvent } from "@/lib/types";
 import Image from "next/image";
 
 type EventPageProps = {
@@ -7,6 +7,14 @@ type EventPageProps = {
     slug: string;
   }
 }
+
+export function generateMetadata({ params }: EventPageProps) {
+  const slug = params.slug;
+  return {
+    title: `Event: ${slug}`
+  }
+}
+
 export default async function EventPage({ params }: EventPageProps) {
   const slug = params.slug;
   const response = await fetch(`https://bytegrad.com/course-assets/projects/evento/api/events/${slug}`);
@@ -31,9 +39,30 @@ export default async function EventPage({ params }: EventPageProps) {
           </div>
         </div>
       </section>
-      <div>
-
+      <div className="text-center min-h-[75vh] px-5 py-16">
+        <Section>
+          <SectionHeading>About this event</SectionHeading>
+          <SectionParaGraph>{event.description}</SectionParaGraph>
+        </Section>
+        <Section>
+          <SectionHeading>Location</SectionHeading>
+          <SectionParaGraph>{event.location}</SectionParaGraph>
+        </Section>
       </div>
-    </main>
+    </main >
   )
+}
+
+function Section({ children }: ChildrenProps) {
+  return <section className="mb-12">
+    {children}
+  </section>
+}
+
+function SectionHeading({ children }: ChildrenProps) {
+  return <h2 className="text-2xl mb-8">{children}</h2>
+}
+
+function SectionParaGraph({ children }: ChildrenProps) {
+  return <p className="max-w-4xl mx-auto text-lg leading-8 text-white/75">{children}</p>
 }
