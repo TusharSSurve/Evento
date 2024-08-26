@@ -1,6 +1,8 @@
 import H1 from "@/components/h1";
-import { ChildrenProps, EventoEvent } from "@/lib/types";
+import prisma from "@/lib/db";
+import { ChildrenProps } from "@/lib/types";
 import Image from "next/image";
+import { notFound } from "next/navigation";
 
 type EventPageProps = {
   params: {
@@ -17,9 +19,16 @@ export function generateMetadata({ params }: EventPageProps) {
 
 export default async function EventPage({ params }: EventPageProps) {
   const slug = params.slug;
-  const response = await fetch(`https://bytegrad.com/course-assets/projects/evento/api/events/${slug}`);
-  const event: EventoEvent = await response.json();
-
+  // const response = await fetch(`https://bytegrad.com/course-assets/projects/evento/api/events/${slug}`);
+  // const event: EventoEvent = await response.json();
+  const event = await prisma.eventoEvent.findUnique({
+    where: {
+      slug: slug,
+    },
+  })
+  if (!event) {
+    return notFound();
+  }
 
   return (
     <main>
